@@ -1,15 +1,6 @@
-import java.io.*;
-import java.util.List;
+import java.io.IOException;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
 //XSSF
-import org.apache.poi.xssf.usermodel.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -17,19 +8,21 @@ public class Main {
 
         ClassicFinder a = new ClassicFinder("1111.xlsx",
                 "bigNew.xlsx",
-                11,
-                12,
-                13,
+                14,
+                15,
+                16,
                 true,
                 "reimport3",
                 "cuba",
                 "cuba",
                 "localhost",
-                "5432"
+                "5432",
+                false
                 );
 
         a.setSearchSettings(true, 4, 5, 7, 2, 1);
-        a.dummySearch();
+        int [] test_ans = a.dummySearch();
+        System.out.println(test_ans);
 //        HSSFWorkbook workbook = new HSSFWorkbook();
 //        HSSFSheet sheet = workbook.createSheet("Employees sheet");
 

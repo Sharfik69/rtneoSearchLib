@@ -1,15 +1,8 @@
-import java.io.*;
-import java.sql.SQLException;
-import java.util.List;
-
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import java.sql.SQLException;
+import java.util.HashMap;
 
 public class ClassicFinder extends Finder{
 
@@ -28,18 +21,18 @@ public class ClassicFinder extends Finder{
      * @param databaseName   название базы данные откуда брать информацию
      * @param login          Логин от базы
      * @param password       Пароль от базы
+     * @param createTable    Нужно ли создавать таблицу, работа с которой будет намного быстрее
      */
     ClassicFinder(String fileName, String outputFileName, int cadastrCol, int areaCol, int nameCol,
-                  boolean header, String databaseName, String login, String password, String addr, String port) {
+                  boolean header, String databaseName, String login, String password, String addr, String port, boolean createTable) {
         super(fileName, outputFileName, cadastrCol, areaCol, nameCol, header);
         this.databaseName = databaseName;
         this.login = login;
         this.password = password;
-        try {
-            this.connection = new DatabaseConnection(databaseName, login, password, addr, port);
-        } catch (SQLException e) {
-            System.out.println("Не удалось подключиться к базе данных");
-            return;
+        this.connection = new DatabaseConnection(databaseName, login, password, addr, port);
+        if (createTable) {
+            boolean ans = this.connection.createSuperTable();
+            System.out.println(ans ? "Супер таблица была создана" : "Таблица скорее всего уже существует");
         }
     }
 
@@ -59,7 +52,6 @@ public class ClassicFinder extends Finder{
         this.apartmentCol = apartmentCol;
         this.infoCol = infoCol;
         this.checker = checker;
-
         this.settingsWasEdited = true;
     }
 
@@ -68,6 +60,8 @@ public class ClassicFinder extends Finder{
      * @return возвращает массив, 0 элемент количество найденных, 1 элемент количество не найденных, 2 элемент количество нескольких найденных записей
      */
     public int[] dummySearch() {
+        System.out.println("Run");
+        int [] ans = new int[3];
         if (!settingsWasEdited) {
             return new int[]{-1, -1, -1, -1};
         }
@@ -88,13 +82,22 @@ public class ClassicFinder extends Finder{
             String house = getXCell(i, houseCol, sheet);
             String apartment = getXCell(i, apartmentCol, sheet);
             String complementaryInfo = getXCell(i, infoCol, sheet);
-
             if (apartment.equals("-") || apartment.equals("")) {
-                connection.sendQuery(street, house, complementaryInfo);
+                HashMap <String, String> response = connection.sendQuery(street, house, complementaryInfo);
+                if (response != null) {
+                    sheet.getRow(i).getCell(getCadastrCol()).setCellValue(response.get("cadastral_number"));
+                    sheet.getRow(i).getCell(getAreaCol()).setCellValue(response.get("area"));
+                    sheet.getRow(i).getCell(getNameCol()).setCellValue(response.get("name"));
+                    ans[0]++;
+                }
+                else {
+                    ans[1]++;
+                }
             }
             else {
                 connection.sendQuery(street, house, apartment, complementaryInfo);
             }
+            System.out.println(ans[0] + " " + ans[1]);
         }
 
         return new int[]{-1, -1, -1, -1};

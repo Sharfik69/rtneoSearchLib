@@ -1,14 +1,9 @@
-import java.io.*;
-import java.util.List;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /** Класс, в котором будем открывать файл
  * @author Dmitrii Zaguzin
@@ -62,5 +57,17 @@ abstract class Finder {
 
     public XSSFSheet getSheet() {
         return sheet;
+    }
+
+    public int getCadastrCol() {
+        return cadastrCol;
+    }
+
+    public int getAreaCol() {
+        return areaCol;
+    }
+
+    public int getNameCol() {
+        return nameCol;
     }
 }
