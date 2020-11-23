@@ -21,7 +21,7 @@ abstract class Finder {
     private String finalFileName;
 
     private int cadastrCol, areaCol, nameCol;
-    private boolean header;
+    protected boolean header;
     /**
      *
      * @param fileName Имя файла в папке inputFiles
@@ -60,4 +60,7 @@ abstract class Finder {
         this.nameCol = nameCol;
     }
 
+    public XSSFSheet getSheet() {
+        return sheet;
+    }
 }

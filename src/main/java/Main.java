@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello world!");
 
-        ClassicFinder a = new ClassicFinder("miniFile.xlsx",
+        ClassicFinder a = new ClassicFinder("1111.xlsx",
                 "bigNew.xlsx",
                 11,
                 12,
@@ -28,6 +28,8 @@ public class Main {
                 "5432"
                 );
 
+        a.setSearchSettings(true, 4, 5, 7, 2, 1);
+        a.dummySearch();
 //        HSSFWorkbook workbook = new HSSFWorkbook();
 //        HSSFSheet sheet = workbook.createSheet("Employees sheet");
 
