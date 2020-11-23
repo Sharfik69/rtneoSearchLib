@@ -15,8 +15,18 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello world!");
 
-        Finder a = new Finder("miniFile.xlsx", "miniNew.xlsx");
-
+        ClassicFinder a = new ClassicFinder("miniFile.xlsx",
+                "bigNew.xlsx",
+                11,
+                12,
+                13,
+                true,
+                "reimport3",
+                "cuba",
+                "cuba",
+                "localhost",
+                "5432"
+                );
 
 //        HSSFWorkbook workbook = new HSSFWorkbook();
 //        HSSFSheet sheet = workbook.createSheet("Employees sheet");

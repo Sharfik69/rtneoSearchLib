@@ -14,31 +14,31 @@ import org.apache.poi.xssf.usermodel.*;
  * @author Dmitrii Zaguzin
  * @version 0.1
  */
-public class Finder {
-    /**
-     * inputStream - поток, в который запишем файл
-     * workbook - переменная ексельки
-     * sheet - переменная листа, на котором прохожит вся работа
-     */
+abstract class Finder {
     private FileInputStream inputStream;
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
     private String finalFileName;
 
     private int cadastrCol, areaCol, nameCol;
-
+    private boolean header;
     /**
      *
      * @param fileName Имя файла в папке inputFiles
      * @param outputFileName С каким именем сохранить файл в папке outputFiles
+     * @param cadastrCol в какой столбец записывать кадастр
+     * @param areaCol в какой столбец записывать площадь
+     * @param nameCol в какой столбец записывать описание адреса
+     * @param header есть ли шапка в таблице, если есть, то в этом случае обрабатываем все со второй строки
+     *
      */
-    Finder (String fileName, String outputFileName, int cadastrCol, int areaCol, int nameCol) {
+    Finder (String fileName, String outputFileName, int cadastrCol, int areaCol, int nameCol, boolean header) {
         try {
             inputStream = new FileInputStream(new File("src/inputFiles/" + fileName));
             workbook = new XSSFWorkbook(inputStream);
             sheet = workbook.getSheetAt(0);
             finalFileName = outputFileName;
-
+            this.header = header;
             setOutputInfo(cadastrCol, areaCol, nameCol);
 
             System.out.println("Файл открыт");
@@ -47,6 +47,13 @@ public class Finder {
             e.printStackTrace();
         }
     }
+
+    /**
+     *
+     * @param cadastrCol в какой столбец ставить кадастр
+     * @param areaCol в какой столбец ставить площадь
+     * @param nameCol в какой столбец выводить описание
+     */
     public void setOutputInfo(int cadastrCol, int areaCol, int nameCol){
         this.cadastrCol = cadastrCol;
         this.areaCol = areaCol;
