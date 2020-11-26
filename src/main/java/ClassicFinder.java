@@ -1,8 +1,11 @@
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ClassicFinder extends Finder{
 
@@ -83,21 +86,26 @@ public class ClassicFinder extends Finder{
             String apartment = getXCell(i, apartmentCol, sheet);
             String complementaryInfo = getXCell(i, infoCol, sheet);
             if (apartment.equals("-") || apartment.equals("")) {
-                HashMap <String, String> response = connection.sendQuery(street, house, complementaryInfo);
-                if (response != null) {
-                    sheet.getRow(i).getCell(getCadastrCol()).setCellValue(response.get("cadastral_number"));
-                    sheet.getRow(i).getCell(getAreaCol()).setCellValue(response.get("area"));
-                    sheet.getRow(i).getCell(getNameCol()).setCellValue(response.get("name"));
+                List<Map<String, String> > response = connection.sendQuery(street, house, complementaryInfo);
+                if (response.size() == 1) {
+                    Map <String, String> responseMap = response.get(0);
+                    sheet.getRow(i).createCell(getCadastrCol(), CellType.STRING).setCellValue(responseMap.get("cadastral_number"));
+                    sheet.getRow(i).createCell(getAreaCol(), CellType.STRING).setCellValue(responseMap.get("area"));
+                    sheet.getRow(i).createCell(getNameCol(), CellType.STRING).setCellValue(responseMap.get("name"));
                     ans[0]++;
+                }
+                else if (response.size() > 0) {
+                    //TODO: Сравнение по площади
+                    ans[2]++;
                 }
                 else {
                     ans[1]++;
                 }
             }
             else {
-                connection.sendQuery(street, house, apartment, complementaryInfo);
+               // connection.sendQuery(street, house, apartment, complementaryInfo);
             }
-            System.out.println(ans[0] + " " + ans[1]);
+            System.out.println(ans[0] + " " + ans[1] + " " + ans[2]);
         }
 
         return new int[]{-1, -1, -1, -1};

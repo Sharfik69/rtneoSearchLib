@@ -1,9 +1,7 @@
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /** Класс, в котором будем открывать файл
  * @author Dmitrii Zaguzin
@@ -41,6 +39,13 @@ abstract class Finder {
             System.out.println("Произошла ошибка");
             e.printStackTrace();
         }
+    }
+
+    public void saveTable() throws IOException {
+        File file = new File("src/inputFiles/" + finalFileName);
+
+        FileOutputStream outFile = new FileOutputStream(file);
+        workbook.write(outFile);
     }
 
     /**

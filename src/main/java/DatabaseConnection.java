@@ -1,8 +1,7 @@
 import org.postgresql.util.PSQLException;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class DatabaseConnection {
     static String DB_URL = "jdbc:postgresql://";
@@ -55,46 +54,67 @@ public class DatabaseConnection {
      * Обычный метод поиска для квартир, используем пока для разработки
      * @param complementaryInfo информация, лучше всего сюда передавать регион
      */
-    public void sendQuery(String street, String house, String apartment, String complementaryInfo) {
-        String query = "select * from " + databaseName + " where street like '" + street + "%' and house like '" + house +
-                "|%' and apartment like '" + apartment + "' and address_notes like '%" + complementaryInfo + "%'";
-        String q;
-        try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public List <Map <String, String> >  sendQuery(String street, String house, String apartment, String complementaryInfo) {
+
+        String query = "select * from " + databaseName
+                + " where street like '" + streetChecker(street)
+                + "' and house like '" + houseChecker(house)
+                + "' and apartment like '" + apartment
+                + "' and address_notes like '%" + complementaryInfo + "%'";
+
+        return queryHandler(query);
     }
+
     /**
      * Обычный метод поиска для обычных домов, используем пока для разработки
      * @param complementaryInfo информация, лучше всего сюда передавать регион
+     * @return Вернет Map со всеми значениями
      */
-    public HashMap<String, String> sendQuery(String street, String house, String complementaryInfo) {
-        String query = "select cadastral_number, assignation_code, area, name from " + databaseName + " where street like '" + street + "%' and house like '" + house +
-                "|%' and apartment is null and address_notes like '%" + complementaryInfo + "%'";
-        ResultSet rs;
+    public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
+        String query = "select cadastral_number, assignation_code, area, name from " + databaseName
+                + " where street like '" + streetChecker(street)
+                + "' and house like '" + houseChecker(house)
+                + "' and apartment is null and address_notes like '%" + complementaryInfo + "%'";
+
+        return queryHandler(query);
+    }
+
+    /**
+     *
+     * @param query - Запрос, который нужно обработать
+     * @return Возвращает лист с ответами
+     */
+    private List <Map <String, String> > queryHandler(String query) {
         String [] neededFields = new String[]{"cadastral_number", "assignation_code", "area", "name"};
         try {
-            rs = stmt.executeQuery(query);
-            ArrayList <HashMap <String, String> > records = new ArrayList<HashMap<String, String>>();
+            ResultSet rs = stmt.executeQuery(query);
+            List <Map <String, String> > records = new ArrayList<Map<String, String>>();
             while (rs.next()) {
-                HashMap <String, String> record = new HashMap<String, String>();
+                Map <String, String> record = new HashMap<String, String>();
                 for (String neededField : neededFields) {
                     record.put(neededField, rs.getString(neededField));
                 }
                 records.add(record);
             }
-            if (records.size() == 1) {
-                return records.get(0);
-            }
+            return records;
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
 
-        return null;
+        return Collections.EMPTY_LIST;
+    }
 
+
+
+    //TODO: Проверка дома на наличие разделителей
+    //TODO: Проверка улицы на наличие цифр
+
+    private String streetChecker(String street) {
+        return street + "%";
+    }
+
+    private String houseChecker(String house) {
+        return house + "|%";
     }
 
     /**
@@ -110,10 +130,8 @@ public class DatabaseConnection {
             System.out.println(rs ? "Таблица создана" : "Таблица скорее всего есть");
         } catch (PSQLException e) {
             System.out.println("Скорее всего таблица уже была создана или произошла какая-то ошибка");
-//            e.printStackTrace();
             return false;
         } catch (SQLException e) {
-//            e.printStackTrace();
             return false;
         }
         return true;

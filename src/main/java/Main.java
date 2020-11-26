@@ -7,12 +7,12 @@ public class Main {
         System.out.println("Hello world!");
 
         ClassicFinder a = new ClassicFinder("1111.xlsx",
-                "bigNew.xlsx",
+                "1111 новый.xlsx",
                 14,
                 15,
                 16,
                 true,
-                "reimport3",
+                "reimport2",
                 "cuba",
                 "cuba",
                 "localhost",
@@ -23,6 +23,7 @@ public class Main {
         a.setSearchSettings(true, 4, 5, 7, 2, 1);
         int [] test_ans = a.dummySearch();
         System.out.println(test_ans);
+        a.saveTable();
 //        HSSFWorkbook workbook = new HSSFWorkbook();
 //        HSSFSheet sheet = workbook.createSheet("Employees sheet");
 

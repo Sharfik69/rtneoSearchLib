@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="xlsxTest" />
+        <module name="rtneoSearchLib2" />
       </profile>
     </annotationProcessing>
   </component>
