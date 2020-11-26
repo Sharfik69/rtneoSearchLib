@@ -11,6 +11,15 @@ public class DatabaseConnection {
     private Connection connection;
     private Statement stmt;
     private String databaseName = "reimport_rtneo_refactor";
+
+    /**
+     *
+     * @param name название базы
+     * @param login логин по которому подключаемся
+     * @param password пароль
+     * @param addr адрес по которому можно подключиться к бд
+     * @param port порт бд, по умолчанию для остгреса 5432
+     */
     DatabaseConnection (String name, String login, String password, String addr, String port) {
         USER = login;
         PASS = password;
@@ -27,8 +36,7 @@ public class DatabaseConnection {
         connection = null;
 
         try {
-            connection = DriverManager
-                    .getConnection(DB_URL, USER, PASS);
+            connection = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = connection.createStatement();
         } catch (SQLException e) {
             System.out.println("Произошла ошибка");
@@ -63,16 +71,13 @@ public class DatabaseConnection {
      * @param complementaryInfo информация, лучше всего сюда передавать регион
      */
     public HashMap<String, String> sendQuery(String street, String house, String complementaryInfo) {
-        System.out.println(1);
         String query = "select cadastral_number, assignation_code, area, name from " + databaseName + " where street like '" + street + "%' and house like '" + house +
                 "|%' and apartment is null and address_notes like '%" + complementaryInfo + "%'";
         ResultSet rs;
         String [] neededFields = new String[]{"cadastral_number", "assignation_code", "area", "name"};
-        System.out.println(2);
         try {
             rs = stmt.executeQuery(query);
             ArrayList <HashMap <String, String> > records = new ArrayList<HashMap<String, String>>();
-            System.out.println(3);
             while (rs.next()) {
                 HashMap <String, String> record = new HashMap<String, String>();
                 for (String neededField : neededFields) {
@@ -80,7 +85,6 @@ public class DatabaseConnection {
                 }
                 records.add(record);
             }
-            System.out.println(4);
             if (records.size() == 1) {
                 return records.get(0);
             }
