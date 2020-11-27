@@ -11,7 +11,7 @@ public class Main {
                 14,
                 15,
                 16,
-                true,
+                false,
                 "reimport2",
                 "cuba",
                 "cuba",
@@ -20,7 +20,7 @@ public class Main {
                 false
                 );
 
-        a.setSearchSettings(true, 4, 5, 7, 2, 1);
+        a.setSearchSettings(true, 4, 5, 7, 2, 12, 1);
         int [] test_ans = a.dummySearch();
         System.out.println(test_ans);
         a.saveTable();
