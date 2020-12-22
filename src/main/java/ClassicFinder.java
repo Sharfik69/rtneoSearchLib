@@ -93,9 +93,6 @@ public class ClassicFinder extends Finder{
                 if (responses.size() == 1) {
                     Map <String, String> responseMap = responses.get(0);
                     setCadastr(i, responseMap, sheet);
-//                    sheet.getRow(i).createCell(getCadastrCol(), CellType.STRING).setCellValue(responseMap.get("cadastral_number"));
-//                    sheet.getRow(i).createCell(getAreaCol(), CellType.STRING).setCellValue(responseMap.get("area"));
-//                    sheet.getRow(i).createCell(getNameCol(), CellType.STRING).setCellValue(responseMap.get("name"));
                     ans[0]++;
                 }
                 else if (responses.size() > 0) {
@@ -121,8 +118,6 @@ public class ClassicFinder extends Finder{
                     else {
                         ans[2]++;
                     }
-                    //TODO: Сравнение по площади
-
                 }
                 else {
                     ans[1]++;

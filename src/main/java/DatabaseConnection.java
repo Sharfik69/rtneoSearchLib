@@ -70,13 +70,25 @@ public class DatabaseConnection {
      * @param complementaryInfo информация, лучше всего сюда передавать регион
      * @return Вернет Map со всеми значениями
      */
-    public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
-        String query = "select cadastral_number, assignation_code, area, name from " + databaseName
-                + " where street like '" + streetChecker(street)
-                + "' and house like '" + houseChecker(house)
-                + "' and apartment is null and address_notes like '%" + complementaryInfo + "%'";
 
-        return queryHandler(query);
+    /*
+    query = """
+    select * from
+    reimport_rosreestr_search where
+    (street like '{0}' or street like '{0}|%' or (street like '{0}-Й%'))
+    and (house like '{1}' or house like '{1}|%')
+    and object_type in ('flat', 'building')
+    and address_notes like '%{3}%'
+    """
+     */
+
+    public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
+        String column = "cadastral_number, assignation_code, area, name";
+        String condition = "(street like '%s' or street like '%s|%%') and (house like '%s' or house like '%s|%%') and apartment is null and address_notes like '%%%s%%'";
+        condition = String.format(condition, street, street, house, house, complementaryInfo);
+        String queryF = String.format("select %s from %s where %s", column, databaseName, condition);
+
+        return queryHandler(queryF);
     }
 
     /**
