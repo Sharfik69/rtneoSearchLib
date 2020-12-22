@@ -12,14 +12,13 @@ public class DatabaseConnection {
     private String databaseName = "reimport_rtneo_refactor";
 
     /**
-     *
-     * @param name название базы
-     * @param login логин по которому подключаемся
+     * @param name     название базы
+     * @param login    логин по которому подключаемся
      * @param password пароль
-     * @param addr адрес по которому можно подключиться к бд
-     * @param port порт бд, по умолчанию для остгреса 5432
+     * @param addr     адрес по которому можно подключиться к бд
+     * @param port     порт бд, по умолчанию для остгреса 5432
      */
-    DatabaseConnection (String name, String login, String password, String addr, String port) {
+    DatabaseConnection(String name, String login, String password, String addr, String port) {
         USER = login;
         PASS = password;
         DB_URL = DB_URL + addr + ":" + port + "/" + name;
@@ -52,9 +51,10 @@ public class DatabaseConnection {
 
     /**
      * Обычный метод поиска для квартир, используем пока для разработки
+     *
      * @param complementaryInfo информация, лучше всего сюда передавать регион
      */
-    public List <Map <String, String> >  sendQuery(String street, String house, String apartment, String complementaryInfo) {
+    public List<Map<String, String>> sendQuery(String street, String house, String apartment, String complementaryInfo) {
 
         String query = "select * from " + databaseName
                 + " where street like '" + streetChecker(street)
@@ -67,6 +67,7 @@ public class DatabaseConnection {
 
     /**
      * Обычный метод поиска для обычных домов, используем пока для разработки
+     *
      * @param complementaryInfo информация, лучше всего сюда передавать регион
      * @return Вернет Map со всеми значениями
      */
@@ -81,7 +82,6 @@ public class DatabaseConnection {
     and address_notes like '%{3}%'
     """
      */
-
     public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
         String column = "cadastral_number, assignation_code, area, name";
         String condition = "(street like '%s' or street like '%s|%%') and (house like '%s' or house like '%s|%%') and apartment is null and address_notes like '%%%s%%'";
@@ -92,17 +92,16 @@ public class DatabaseConnection {
     }
 
     /**
-     *
      * @param query - Запрос, который нужно обработать
      * @return Возвращает лист с ответами
      */
-    private List <Map <String, String> > queryHandler(String query) {
-        String [] neededFields = new String[]{"cadastral_number", "assignation_code", "area", "name"};
+    private List<Map<String, String>> queryHandler(String query) {
+        String[] neededFields = new String[]{"cadastral_number", "assignation_code", "area", "name"};
         try {
             ResultSet rs = stmt.executeQuery(query);
-            List <Map <String, String> > records = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> records = new ArrayList<Map<String, String>>();
             while (rs.next()) {
-                Map <String, String> record = new HashMap<String, String>();
+                Map<String, String> record = new HashMap<String, String>();
                 for (String neededField : neededFields) {
                     record.put(neededField, rs.getString(neededField));
                 }
@@ -115,7 +114,6 @@ public class DatabaseConnection {
 
         return Collections.EMPTY_LIST;
     }
-
 
 
     //TODO: Проверка дома на наличие разделителей
@@ -131,6 +129,7 @@ public class DatabaseConnection {
 
     /**
      * Метод который создает заджойненную таблицу, с которой удобнее всего работать
+     *
      * @return true - если таблица была создана, иначе false
      */
     public boolean createSuperTable() {
