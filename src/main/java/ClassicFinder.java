@@ -84,39 +84,40 @@ public class ClassicFinder extends Finder {
             String house = getXCell(i, houseCol, sheet);
             String apartment = getXCell(i, apartmentCol, sheet);
             String complementaryInfo = getXCell(i, infoCol, sheet);
+            List<Map<String, String>> responses;
             if (apartment.equals("-") || apartment.equals("")) {
-                List<Map<String, String>> responses = connection.sendQuery(street, house, complementaryInfo);
-                if (responses.size() == 1) {
-                    Map<String, String> responseMap = responses.get(0);
-                    setCadastr(i, responseMap, sheet);
-                    ans[0]++;
-                } else if (responses.size() > 0) {
-                    ArrayList<Map<String, String>> potentialAddress = new ArrayList<Map<String, String>>();
-                    for (Map<String, String> response : responses) {
-                        try {
-                            BigDecimal responseArea = new BigDecimal(response.get("area")),
-                                    addressArea = new BigDecimal(getXCell(i, infoAreaCol, sheet)),
-                                    difference;
+                responses = connection.sendQuery(street, house, complementaryInfo);
+            } else {
+                responses = connection.sendQuery(street, house, apartment, complementaryInfo);
+            }
+            if (responses.size() == 1) {
+                Map<String, String> responseMap = responses.get(0);
+                setCadastr(i, responseMap, sheet);
+                ans[0]++;
+            } else if (responses.size() > 0) {
+                ArrayList<Map<String, String>> potentialAddress = new ArrayList<Map<String, String>>();
+                for (Map<String, String> response : responses) {
+                    try {
+                        BigDecimal responseArea = new BigDecimal(response.get("area")),
+                                addressArea = new BigDecimal(getXCell(i, infoAreaCol, sheet)),
+                                difference;
 
-                            difference = responseArea.subtract(addressArea).abs();
+                        difference = responseArea.subtract(addressArea).abs();
 
-                            if (difference.compareTo(new BigDecimal("0.75")) < 0) {
-                                potentialAddress.add(response);
-                            }
-                        } catch (Exception ignor) {
+                        if (difference.compareTo(new BigDecimal("0.75")) < 0) {
+                            potentialAddress.add(response);
                         }
+                    } catch (Exception ignor) {
                     }
-                    if (potentialAddress.size() == 1) {
-                        setCadastr(i, potentialAddress.get(0), sheet);
-                        ans[0]++;
-                    } else {
-                        ans[2]++;
-                    }
+                }
+                if (potentialAddress.size() == 1) {
+                    setCadastr(i, potentialAddress.get(0), sheet);
+                    ans[0]++;
                 } else {
-                    ans[1]++;
+                    ans[2]++;
                 }
             } else {
-                // connection.sendQuery(street, house, apartment, complementaryInfo);
+                ans[1]++;
             }
             System.out.println(ans[0] + " " + ans[1] + " " + ans[2]);
         }
