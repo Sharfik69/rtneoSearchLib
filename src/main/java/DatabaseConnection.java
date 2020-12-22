@@ -56,13 +56,22 @@ public class DatabaseConnection {
      */
     public List<Map<String, String>> sendQuery(String street, String house, String apartment, String complementaryInfo) {
 
-        String query = "select * from " + databaseName
-                + " where street like '" + streetChecker(street)
-                + "' and house like '" + houseChecker(house)
-                + "' and apartment like '" + apartment
-                + "' and address_notes like '%" + complementaryInfo + "%'";
+        String columnQ = "cadastral_number, assignation_code, area, name";
+        String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
+        String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
+        String apartmentQ = String.format("apartment like '%s'", apartment);
+        String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
+        String[] literalResponse = letterInHouse(house);
+        if (!literalResponse[0].equals("EMPTY")) {
+            houseQ = String.format("(house like '%s%s' or house like '%s_%s' or house like '%s%s' or house like '%s_%s')",
+                    literalResponse[0], literalResponse[1], literalResponse[0], literalResponse[1],
+                    literalResponse[0], literalResponse[1].toUpperCase(), literalResponse[0], literalResponse[1].toUpperCase());
+        }
 
-        return queryHandler(query);
+        String condition = String.format("%s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ);
+        String queryF = String.format("select %s from %s where %s", columnQ, databaseName, condition);
+
+        return queryHandler(queryF);
     }
 
     /**
@@ -71,24 +80,30 @@ public class DatabaseConnection {
      * @param complementaryInfo информация, лучше всего сюда передавать регион
      * @return Вернет Map со всеми значениями
      */
-
-    /*
-    query = """
-    select * from
-    reimport_rosreestr_search where
-    (street like '{0}' or street like '{0}|%' or (street like '{0}-Й%'))
-    and (house like '{1}' or house like '{1}|%')
-    and object_type in ('flat', 'building')
-    and address_notes like '%{3}%'
-    """
-     */
     public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
-        String column = "cadastral_number, assignation_code, area, name";
-        String condition = "(street like '%s' or street like '%s|%%') and (house like '%s' or house like '%s|%%') and apartment is null and address_notes like '%%%s%%'";
-        condition = String.format(condition, street, street, house, house, complementaryInfo);
-        String queryF = String.format("select %s from %s where %s", column, databaseName, condition);
+
+        String columnQ = "cadastral_number, assignation_code, area, name";
+        String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
+        String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
+        String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
+        String[] literalResponse = letterInHouse(house);
+        if (!literalResponse[0].equals("EMPTY")) {
+            houseQ = String.format("(house like '%s%s%%' or house like '%s_%s%%' or house like '%s%s%%' or house like '%s_%s%%')",
+                    literalResponse[0], literalResponse[1], literalResponse[0], literalResponse[1],
+                    literalResponse[0], literalResponse[1].toUpperCase(), literalResponse[0], literalResponse[1].toUpperCase());
+        }
+
+        String condition = String.format("%s and %s and %s", streetQ, houseQ, addressNotesQ);
+        String queryF = String.format("select %s from %s where %s", columnQ, databaseName, condition);
 
         return queryHandler(queryF);
+
+//        String column = "cadastral_number, assignation_code, area, name";
+//        String condition = "(street like '%s' or street like '%s|%%') and (house like '%s' or house like '%s|%%') and apartment is null and address_notes like '%%%s%%'";
+//        condition = String.format(condition, street, street, house, house, complementaryInfo);
+//        String queryF = String.format("select %s from %s where %s", column, databaseName, condition);
+//
+//        return queryHandler(queryF);
     }
 
     /**
@@ -115,17 +130,28 @@ public class DatabaseConnection {
         return Collections.EMPTY_LIST;
     }
 
-
-    //TODO: Проверка дома на наличие разделителей
-    //TODO: Проверка улицы на наличие цифр
-
-    private String streetChecker(String street) {
-        return street + "%";
+    /**
+     * Функция проверяет есть ли в названии дома литера и цифра
+     *
+     * @param house дом
+     * @return {EMPTY, EMPTY} если дом только из цифр, иначе литеру дома и номер
+     */
+    private String[] letterInHouse(String house) {
+        String[] ans = new String[]{"", ""};
+        for (int i = 0; i < house.length(); i++) {
+            if (Character.isLetter(house.charAt(i))) {
+                ans[1] += house.charAt(i);
+            } else if (Character.isDigit(house.charAt(i))) {
+                ans[0] += house.charAt(i);
+            }
+        }
+        if (ans[1].equals("")) {
+            return new String[]{"EMPTY", "EMPTY"};
+        } else {
+            return ans;
+        }
     }
 
-    private String houseChecker(String house) {
-        return house + "|%";
-    }
 
     /**
      * Метод который создает заджойненную таблицу, с которой удобнее всего работать
