@@ -56,21 +56,7 @@ public class DatabaseConnection {
      */
     public List<Map<String, String>> sendQuery(String street, String house, String apartment, String complementaryInfo) {
 
-        String columnQ = "cadastral_number, assignation_code, area, name";
-        String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
-        String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
-        String apartmentQ = String.format("apartment like '%s'", apartment);
-        String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
-        String[] literalResponse = letterInHouse(house);
-        if (!literalResponse[0].equals("EMPTY")) {
-            houseQ = String.format("(house like '%s%s' or house like '%s_%s' or house like '%s%s' or house like '%s_%s')",
-                    literalResponse[0], literalResponse[1], literalResponse[0], literalResponse[1],
-                    literalResponse[0], literalResponse[1].toUpperCase(), literalResponse[0], literalResponse[1].toUpperCase());
-        }
-
-        String condition = String.format("%s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ);
-        String queryF = String.format("select %s from %s where %s", columnQ, databaseName, condition);
-
+        String queryF = queryFormer(street, house, apartment, complementaryInfo);
         return queryHandler(queryF);
     }
 
@@ -82,28 +68,9 @@ public class DatabaseConnection {
      */
     public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
 
-        String columnQ = "cadastral_number, assignation_code, area, name";
-        String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
-        String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
-        String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
-        String[] literalResponse = letterInHouse(house);
-        if (!literalResponse[0].equals("EMPTY")) {
-            houseQ = String.format("(house like '%s%s%%' or house like '%s_%s%%' or house like '%s%s%%' or house like '%s_%s%%')",
-                    literalResponse[0], literalResponse[1], literalResponse[0], literalResponse[1],
-                    literalResponse[0], literalResponse[1].toUpperCase(), literalResponse[0], literalResponse[1].toUpperCase());
-        }
-
-        String condition = String.format("%s and %s and %s", streetQ, houseQ, addressNotesQ);
-        String queryF = String.format("select %s from %s where %s", columnQ, databaseName, condition);
-
+        String queryF = queryFormer(street, house, "", complementaryInfo);
         return queryHandler(queryF);
 
-//        String column = "cadastral_number, assignation_code, area, name";
-//        String condition = "(street like '%s' or street like '%s|%%') and (house like '%s' or house like '%s|%%') and apartment is null and address_notes like '%%%s%%'";
-//        condition = String.format(condition, street, street, house, house, complementaryInfo);
-//        String queryF = String.format("select %s from %s where %s", column, databaseName, condition);
-//
-//        return queryHandler(queryF);
     }
 
     /**
@@ -128,6 +95,27 @@ public class DatabaseConnection {
         }
 
         return Collections.EMPTY_LIST;
+    }
+
+    private String queryFormer(String street, String house, String apartment, String complementaryInfo) {
+        String columnQ = "cadastral_number, assignation_code, area, name";
+        String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
+        String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
+        String apartmentQ = String.format("apartment like '%s'", apartment);
+        if (apartment.equals("")) {
+            apartmentQ = "1 > 0";
+        }
+        String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
+        String[] literalResponse = letterInHouse(house);
+        if (!literalResponse[0].equals("EMPTY")) {
+            houseQ = String.format("(house like '%s%s%%' or house like '%s_%s%%' or house like '%s%s%%' or house like '%s_%s%%')",
+                    literalResponse[0], literalResponse[1], literalResponse[0], literalResponse[1],
+                    literalResponse[0], literalResponse[1].toUpperCase(), literalResponse[0], literalResponse[1].toUpperCase());
+        }
+
+        String condition = String.format("%s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ);
+
+        return String.format("select %s from %s where %s", columnQ, databaseName, condition);
     }
 
     /**
