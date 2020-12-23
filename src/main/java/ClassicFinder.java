@@ -96,6 +96,7 @@ public class ClassicFinder extends Finder {
                 ans[0]++;
             } else if (responses.size() > 0) {
                 ArrayList<Map<String, String>> potentialAddress = new ArrayList<Map<String, String>>();
+                ArrayList<Map<String, String>> zeroDifference = new ArrayList<Map<String, String>>();
                 for (Map<String, String> response : responses) {
                     try {
                         BigDecimal responseArea = new BigDecimal(response.get("area")),
@@ -103,13 +104,21 @@ public class ClassicFinder extends Finder {
                                 difference;
 
                         difference = responseArea.subtract(addressArea).abs();
-
-                        if (difference.compareTo(new BigDecimal("0.75")) < 0) {
+                        if (difference.compareTo(new BigDecimal("0.0001")) <= 0) {
+                            zeroDifference.add(response);
+                        } else if (difference.compareTo(new BigDecimal("0.75")) < 0) {
                             potentialAddress.add(response);
                         }
                     } catch (Exception ignor) {
                     }
                 }
+
+                if (zeroDifference.size() == 1) {
+                    potentialAddress = zeroDifference;
+                } else if (zeroDifference.size() > 1) {
+                    potentialAddress.addAll(zeroDifference);
+                }
+
                 if (potentialAddress.size() == 1) {
                     setCadastr(i, potentialAddress.get(0), sheet);
                     ans[0]++;
@@ -119,6 +128,7 @@ public class ClassicFinder extends Finder {
             } else {
                 ans[1]++;
             }
+            //System.out.print("\r" + ans[0] + " " + ans[1] + " " + ans[2]);
             System.out.println(ans[0] + " " + ans[1] + " " + ans[2]);
         }
 

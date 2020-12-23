@@ -102,16 +102,32 @@ public class DatabaseConnection {
         String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
         String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
         String apartmentQ = String.format("apartment like '%s'", apartment);
-        if (apartment.equals("")) {
-            apartmentQ = "1 > 0";
-        }
         String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
-        String[] literalResponse = letterInHouse(house);
-        if (!literalResponse[0].equals("EMPTY")) {
-            houseQ = String.format("(house like '%s%s%%' or house like '%s_%s%%' or house like '%s%s%%' or house like '%s_%s%%')",
-                    literalResponse[0], literalResponse[1], literalResponse[0], literalResponse[1],
-                    literalResponse[0], literalResponse[1].toUpperCase(), literalResponse[0], literalResponse[1].toUpperCase());
+
+        //Обработка квартир
+        if (apartment.equals("")) {
+            apartmentQ = "apartment is null";
         }
+
+        //Обработка дома
+        String[] literalResponseHouse = letterAndDigitInString(house);
+        if (!literalResponseHouse[0].equals("")) {
+            houseQ = String.format("(house like '%s%s%%' or house like '%s_%s%%' or house like '%s%s%%' or house like '%s_%s%%')",
+                    literalResponseHouse[0], literalResponseHouse[1], literalResponseHouse[0], literalResponseHouse[1],
+                    literalResponseHouse[0], literalResponseHouse[1].toUpperCase(), literalResponseHouse[0], literalResponseHouse[1].toUpperCase());
+        }
+
+        //Обработка улицы
+        String[] badStr = new String[]{"-ЫЙ", "-ОЙ", "-АЯ", "-Я", "-Й"};
+        String streetForFormat = street;
+        for (String bad : badStr) streetForFormat = streetForFormat.replace(bad, "");
+
+        String[] digitResponseStreet = letterAndDigitInString(streetForFormat);
+        if (!digitResponseStreet[1].equals("")) {
+            streetQ = String.format("(street like '%s%%%s%%' or street like '%s%%%s%%')", digitResponseStreet[0], digitResponseStreet[1],
+                    digitResponseStreet[1], digitResponseStreet[0]);
+        }
+
 
         String condition = String.format("%s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ);
 
@@ -124,7 +140,7 @@ public class DatabaseConnection {
      * @param house дом
      * @return {EMPTY, EMPTY} если дом только из цифр, иначе литеру дома и номер
      */
-    private String[] letterInHouse(String house) {
+    private String[] letterAndDigitInString(String house) {
         String[] ans = new String[]{"", ""};
         for (int i = 0; i < house.length(); i++) {
             if (Character.isLetter(house.charAt(i))) {
@@ -134,7 +150,7 @@ public class DatabaseConnection {
             }
         }
         if (ans[1].equals("")) {
-            return new String[]{"EMPTY", "EMPTY"};
+            return new String[]{"", ""};
         } else {
             return ans;
         }
