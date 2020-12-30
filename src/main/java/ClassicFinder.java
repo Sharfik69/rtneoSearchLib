@@ -2,6 +2,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class ClassicFinder extends Finder {
     private DatabaseConnection connection;
     private boolean printInfo, settingsWasEdited = false;
     private int streetCol, houseCol, apartmentCol, infoCol, checker, infoAreaCol;
-
+    private newFileCreater forFewRecords;
     /**
      * @param fileName       Имя файла в папке inputFiles
      * @param outputFileName С каким именем сохранить файл в папке outputFiles
@@ -33,6 +34,9 @@ public class ClassicFinder extends Finder {
         this.login = login;
         this.password = password;
         this.connection = new DatabaseConnection(databaseName, login, password, addr, port);
+
+        this.forFewRecords = new newFileCreater(this);
+
         if (createTable) {
             boolean ans = this.connection.createSuperTable();
             System.out.println(ans ? "Супер таблица была создана" : "Таблица скорее всего уже существует");
@@ -63,7 +67,7 @@ public class ClassicFinder extends Finder {
      *
      * @return возвращает массив, 0 элемент количество найденных, 1 элемент количество не найденных, 2 элемент количество нескольких найденных записей
      */
-    public int[] dummySearch() {
+    public int[] dummySearch() throws IOException {
         System.out.println("Run");
         int[] ans = new int[3];
         if (!settingsWasEdited) {
@@ -124,7 +128,8 @@ public class ClassicFinder extends Finder {
                     setCadastr(i, potentialAddress.get(0), sheet);
                     ans[0]++;
                 } else {
-                    System.out.println(responses.size());
+//                    System.out.println(responses.size());
+                    addFewAddresses(i, responses, sheet);
                     ans[2]++;
                 }
             } else {
@@ -136,8 +141,12 @@ public class ClassicFinder extends Finder {
                     ans[1],
                     ans[2]));
         }
-
+        forFewRecords.saveFile("Несколько записей.xlsx");
         return new int[]{-1, -1, -1, -1};
+    }
+
+    private void addFewAddresses(int row, List<Map<String, String>> responses, XSSFSheet sheet) {
+        forFewRecords.addRecords(sheet.getRow(row), 30, responses);
     }
 
     private void setCadastr(int row, Map<String, String> responseMap, XSSFSheet sheet) {
