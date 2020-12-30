@@ -142,12 +142,18 @@ public class DatabaseConnection {
      */
     private String[] letterAndDigitInString(String house) {
         String[] ans = new String[]{"", ""};
+        int cnt_space = 0;
         for (int i = 0; i < house.length(); i++) {
             if (Character.isLetter(house.charAt(i))) {
                 ans[1] += house.charAt(i);
             } else if (Character.isDigit(house.charAt(i))) {
                 ans[0] += house.charAt(i);
             }
+            if (house.charAt(i) == ' ') cnt_space += 1;
+        }
+        if (cnt_space > 1) {
+            String[] ans2 = house.split(" ");
+            ans = new String[]{ans2[0], String.join(" ", Arrays.copyOfRange(ans2, 1, ans2.length))};//ans2[1] + " " + ans2[2]};
         }
         if (ans[1].equals("")) {
             return new String[]{"", ""};

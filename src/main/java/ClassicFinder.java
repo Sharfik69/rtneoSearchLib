@@ -1,6 +1,7 @@
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,13 +124,17 @@ public class ClassicFinder extends Finder {
                     setCadastr(i, potentialAddress.get(0), sheet);
                     ans[0]++;
                 } else {
+                    System.out.println(responses.size());
                     ans[2]++;
                 }
             } else {
                 ans[1]++;
             }
-            //System.out.print("\r" + ans[0] + " " + ans[1] + " " + ans[2]);
-            System.out.println(ans[0] + " " + ans[1] + " " + ans[2]);
+            System.out.print(String.format("\r%d%% (g - %d, b - %d, f - %d)",
+                    cnt * 100 / rowSize,
+                    ans[0],
+                    ans[1],
+                    ans[2]));
         }
 
         return new int[]{-1, -1, -1, -1};
