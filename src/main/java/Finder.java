@@ -13,6 +13,7 @@ import java.io.IOException;
  * @version 0.1
  */
 abstract class Finder {
+    private String fileName;
     protected boolean header;
     private FileInputStream inputStream;
     private XSSFWorkbook workbook;
@@ -30,6 +31,7 @@ abstract class Finder {
      */
     Finder(String fileName, String outputFileName, int cadastrCol, int areaCol, int nameCol, boolean header) {
         try {
+            this.fileName = fileName;
             inputStream = new FileInputStream(new File("src/inputFiles/" + fileName));
             workbook = new XSSFWorkbook(inputStream);
             sheet = workbook.getSheetAt(0);
@@ -76,5 +78,9 @@ abstract class Finder {
 
     public int getNameCol() {
         return nameCol;
+    }
+
+    public String getFileName() {
+        return fileName.replace(".xlsx", "");
     }
 }

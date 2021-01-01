@@ -4,8 +4,9 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        ClassicFinder a = new ClassicFinder("Усть-Удинский.xlsx",
-                "Усть-Удинский тестовый.xlsx",
+        String fileName = "";
+        ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
+                fileName + "тестовый.xlsx",
                 14,
                 15,
                 16,
@@ -19,7 +20,13 @@ public class Main {
         );
         long startTime = System.nanoTime();
 
-        a.setSearchSettings(true, 4, 5, 7, 2, 10, 1);
+        a.setSearchSettings(true,
+                4,
+                5,
+                7,
+                2,
+                10,
+                1);
         int[] test_ans = a.dummySearch();
 
         long endTime = System.nanoTime();
