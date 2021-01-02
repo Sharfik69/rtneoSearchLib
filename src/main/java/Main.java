@@ -4,9 +4,9 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String fileName = "";
+        String fileName = "Бодайбинский";
         ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
-                fileName + "тестовый.xlsx",
+                fileName + " синхронизированные.xlsx",
                 14,
                 15,
                 16,

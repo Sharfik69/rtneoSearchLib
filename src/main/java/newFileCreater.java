@@ -43,7 +43,7 @@ public class newFileCreater {
     }
 
     public void saveFile(String finalFileName) throws IOException {
-        File file = new File("src/inputFiles/" + finder.getFileName() + " Неоднозначные.xlsx");
+        File file = new File("src/inputFiles/" + finalFileName);
 
         FileOutputStream outFile = new FileOutputStream(file);
         wb.write(outFile);

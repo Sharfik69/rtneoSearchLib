@@ -1,10 +1,13 @@
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ public class ClassicFinder extends Finder {
     private boolean printInfo, settingsWasEdited = false;
     private int streetCol, houseCol, apartmentCol, infoCol, checker, infoAreaCol;
     private newFileCreater forFewRecords;
+    private int[] status;
     /**
      * @param fileName       Имя файла в папке inputFiles
      * @param outputFileName С каким именем сохранить файл в папке outputFiles
@@ -36,7 +40,6 @@ public class ClassicFinder extends Finder {
         this.connection = new DatabaseConnection(databaseName, login, password, addr, port);
 
         this.forFewRecords = new newFileCreater(this);
-
         if (createTable) {
             boolean ans = this.connection.createSuperTable();
             System.out.println(ans ? "Супер таблица была создана" : "Таблица скорее всего уже существует");
@@ -71,7 +74,7 @@ public class ClassicFinder extends Finder {
         System.out.println("Run");
         int[] ans = new int[3];
         if (!settingsWasEdited) {
-            return new int[]{-1, -1, -1, -1};
+            return new int[]{-1, -1, -1};
         }
         XSSFSheet sheet = getSheet();
         int from = (super.header ? 1 : 0);
@@ -141,12 +144,17 @@ public class ClassicFinder extends Finder {
                     ans[1],
                     ans[2]));
         }
-        forFewRecords.saveFile("Несколько записей.xlsx");
-        return new int[]{-1, -1, -1, -1};
+        forFewRecords.saveFile(getFileName() + " Несколько записей.xlsx");
+        status = ans;
+        FileWriter writer = new FileWriter("src/inputFiles/" + getFileName() + ".txt", true);
+        BufferedWriter bufferWriter = new BufferedWriter(writer);
+        bufferWriter.write(Arrays.toString(ans) + " " + getFileName());
+        bufferWriter.close();
+        return ans;
     }
 
     private void addFewAddresses(int row, List<Map<String, String>> responses, XSSFSheet sheet) {
-        forFewRecords.addRecords(sheet.getRow(row), 30, responses);
+        forFewRecords.addRecords(sheet.getRow(row), 27, responses);
     }
 
     private void setCadastr(int row, Map<String, String> responseMap, XSSFSheet sheet) {
