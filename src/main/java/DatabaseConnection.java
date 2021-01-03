@@ -155,7 +155,8 @@ public class DatabaseConnection {
             String[] ans2 = house.split(" ");
             ans = new String[]{ans2[0], String.join(" ", Arrays.copyOfRange(ans2, 1, ans2.length))};//ans2[1] + " " + ans2[2]};
         }
-        if (ans[1].equals("")) {
+
+        if (ans[1].equals("") || ans[0].equals("")) {
             return new String[]{"", ""};
         } else {
             return ans;

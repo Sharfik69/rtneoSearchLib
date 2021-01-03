@@ -1,4 +1,8 @@
 *.xlsx
+*.txt
+*.xlsx#
+
+/src/inputFiles/super_compl_info
 
 out/
 .idea/

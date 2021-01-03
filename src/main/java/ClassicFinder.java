@@ -87,11 +87,19 @@ public class ClassicFinder extends Finder {
                 break;
             }
         }
-        for (int i = from, cnt = 0; cnt <= rowSize; i++, cnt++) {
+        int startFrom = 0;
+        for (int i = from, cnt = startFrom; cnt <= rowSize; i++, cnt++) {
             String street = getXCell(i, streetCol, sheet).toUpperCase();
             String house = getXCell(i, houseCol, sheet);
             String apartment = getXCell(i, apartmentCol, sheet);
             String complementaryInfo = getXCell(i, infoCol, sheet);
+
+            String cadastralCheck = getXCell(i, getCadastrCol(), sheet);
+
+            if (!cadastralCheck.equals("")) {
+                continue;
+            }
+
             List<Map<String, String>> responses;
             if (apartment.equals("-") || apartment.equals("")) {
                 responses = connection.sendQuery(street, house, complementaryInfo);
