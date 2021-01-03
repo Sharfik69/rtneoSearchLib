@@ -2,7 +2,6 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,6 +18,7 @@ public class ClassicFinder extends Finder {
     private int streetCol, houseCol, apartmentCol, infoCol, checker, infoAreaCol;
     private newFileCreater forFewRecords;
     private int[] status;
+
     /**
      * @param fileName       Имя файла в папке inputFiles
      * @param outputFileName С каким именем сохранить файл в папке outputFiles
@@ -146,11 +146,12 @@ public class ClassicFinder extends Finder {
             } else {
                 ans[1]++;
             }
-            System.out.print(String.format("\r%d%% (g - %d, b - %d, f - %d)",
+            System.out.print(String.format("\r%d%% (g - %d, b - %d, f - %d) id - %d",
                     cnt * 100 / rowSize,
                     ans[0],
                     ans[1],
-                    ans[2]));
+                    ans[2],
+                    i));
         }
         forFewRecords.saveFile(getFileName() + " Несколько записей.xlsx");
         status = ans;

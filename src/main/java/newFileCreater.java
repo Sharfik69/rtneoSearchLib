@@ -16,6 +16,7 @@ public class newFileCreater {
     private XSSFSheet sheet;
     private int currentRow;
     private Finder finder;
+
     newFileCreater(Finder finder) {
         wb = new XSSFWorkbook();
         sheet = (XSSFSheet) wb.createSheet();
@@ -30,12 +31,11 @@ public class newFileCreater {
             XSSFCell cell = currentNewRow.createCell(col);
             try {
                 cell.setCellValue(rowInfo.getCell(col).getStringCellValue());
-            }
-            catch (NullPointerException e) {
+            } catch (NullPointerException e) {
                 continue;
             }
         }
-        for (Map <String, String> response : responses) {
+        for (Map<String, String> response : responses) {
             currentRow += 1;
             sheet.createRow(currentRow);
             setCadastr(currentRow, response, sheet);
@@ -54,7 +54,6 @@ public class newFileCreater {
         sheet.getRow(row).createCell(finder.getAreaCol(), CellType.STRING).setCellValue(responseMap.get("area"));
         sheet.getRow(row).createCell(finder.getNameCol(), CellType.STRING).setCellValue(responseMap.get("name"));
     }
-
 
 
 }

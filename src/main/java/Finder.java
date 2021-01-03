@@ -13,8 +13,8 @@ import java.io.IOException;
  * @version 0.1
  */
 abstract class Finder {
-    private String fileName;
     protected boolean header;
+    private String fileName;
     private FileInputStream inputStream;
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;

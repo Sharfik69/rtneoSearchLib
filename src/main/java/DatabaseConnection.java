@@ -57,7 +57,11 @@ public class DatabaseConnection {
     public List<Map<String, String>> sendQuery(String street, String house, String apartment, String complementaryInfo) {
 
         String queryF = queryFormer(street, house, apartment, complementaryInfo);
-        return queryHandler(queryF);
+        List<Map<String, String>> q = queryHandler(queryF);
+        if (q.size() == 0) {
+            q = searchWithoutStreet(street, house, apartment, complementaryInfo);
+        }
+        return q;
     }
 
     /**
@@ -69,8 +73,18 @@ public class DatabaseConnection {
     public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
 
         String queryF = queryFormer(street, house, "", complementaryInfo);
-        return queryHandler(queryF);
+        List<Map<String, String>> q = queryHandler(queryF);
+        if (q.size() == 0) {
+            q = searchWithoutStreet(street, house, "", complementaryInfo);
+        }
+        return q;
 
+    }
+
+    public List<Map<String, String>> searchWithoutStreet(String street, String house, String apartment, String complementaryInfo) {
+        String query = queryFormer(street, house, apartment, complementaryInfo);
+        query = query.replace(String.format("(street like '%s' or street like '%s|%%')", street, street), String.format("(street is null and address_notes like '%%%s%%')", capitalize(street)));
+        return queryHandler(query);
     }
 
     /**
@@ -183,6 +197,11 @@ public class DatabaseConnection {
             return false;
         }
         return true;
+    }
+
+    private String capitalize(String val) {
+        return val.substring(0,1).toUpperCase() + val.substring(1).toLowerCase();
+
     }
 
 }
