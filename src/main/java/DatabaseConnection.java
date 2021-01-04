@@ -113,7 +113,7 @@ public class DatabaseConnection {
 
     private String queryFormer(String street, String house, String apartment, String complementaryInfo) {
         String columnQ = "cadastral_number, assignation_code, area, name";
-        String streetQ = String.format("(street like '%s' or street like '%s|%%')", street, street);
+        String streetQ = String.format("(street like '%s' or street like '%s|%%' or street like '%s-Й' or street like '%s-Я')", street, street, street, street);
         String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
         String apartmentQ = String.format("apartment like '%s'", apartment);
         String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);

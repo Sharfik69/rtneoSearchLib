@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String fileName = "Усольский";
+        String fileName = "Черемховский";
         ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
                 fileName + " синхронизированные.xlsx",
                 14,

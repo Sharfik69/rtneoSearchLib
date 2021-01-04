@@ -40,6 +40,7 @@ public class newFileCreater {
             sheet.createRow(currentRow);
             setCadastr(currentRow, response, sheet);
         }
+        currentRow += 1;
     }
 
     public void saveFile(String finalFileName) throws IOException {

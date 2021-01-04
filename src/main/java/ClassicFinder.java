@@ -88,7 +88,8 @@ public class ClassicFinder extends Finder {
             }
         }
         int startFrom = 0;
-        for (int i = from, cnt = startFrom; cnt <= rowSize; i++, cnt++) {
+
+        for (int i = from, cnt = startFrom; cnt < rowSize; i++, cnt++) {
             String street = getXCell(i, streetCol, sheet).toUpperCase();
             String house = getXCell(i, houseCol, sheet);
             String apartment = getXCell(i, apartmentCol, sheet);
