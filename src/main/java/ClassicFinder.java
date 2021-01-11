@@ -18,7 +18,7 @@ public class ClassicFinder extends Finder {
     private int streetCol, houseCol, apartmentCol, infoCol, checker, infoAreaCol;
     private newFileCreater forFewRecords;
     private int[] status;
-
+    private newFileCreater forAreaRecords;
     /**
      * @param fileName       Имя файла в папке inputFiles
      * @param outputFileName С каким именем сохранить файл в папке outputFiles
@@ -40,6 +40,7 @@ public class ClassicFinder extends Finder {
         this.connection = new DatabaseConnection(databaseName, login, password, addr, port);
 
         this.forFewRecords = new newFileCreater(this);
+        this.forAreaRecords = new newFileCreater(this);
         if (createTable) {
             boolean ans = this.connection.createSuperTable();
             System.out.println(ans ? "Супер таблица была создана" : "Таблица скорее всего уже существует");
@@ -138,6 +139,7 @@ public class ClassicFinder extends Finder {
 
                 if (potentialAddress.size() == 1) {
                     setCadastr(i, potentialAddress.get(0), sheet);
+                    addAreaAddresses(i, responses, sheet); //Те, которые отобрали по площади
                     ans[0]++;
                 } else {
 //                    System.out.println(responses.size());
@@ -155,6 +157,7 @@ public class ClassicFinder extends Finder {
                     i));
         }
         forFewRecords.saveFile(getFileName() + " Несколько записей.xlsx");
+        forAreaRecords.saveFile(getFileName() + " Несколько записей, но нашли верную по площади.xlsx");
         status = ans;
         FileWriter writer = new FileWriter("src/inputFiles/" + getFileName() + ".txt", true);
         BufferedWriter bufferWriter = new BufferedWriter(writer);
@@ -165,6 +168,10 @@ public class ClassicFinder extends Finder {
 
     private void addFewAddresses(int row, List<Map<String, String>> responses, XSSFSheet sheet) {
         forFewRecords.addRecords(sheet.getRow(row), 27, responses);
+    }
+
+    private void addAreaAddresses(int row, List<Map<String, String>> responses, XSSFSheet sheet) {
+        forAreaRecords.addRecords(sheet.getRow(row), 27, responses);
     }
 
     private void setCadastr(int row, Map<String, String> responseMap, XSSFSheet sheet) {

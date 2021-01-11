@@ -117,7 +117,7 @@ public class DatabaseConnection {
         String houseQ = String.format("(house like '%s' or house like '%s|%%')", house, house);
         String apartmentQ = String.format("apartment like '%s'", apartment);
         String addressNotesQ = String.format("address_notes like '%%%s%%'", complementaryInfo);
-
+        String additionalInfo = "assignation_code not in ('204001000000', '206001000000')";
         //Обработка квартир
         if (apartment.equals("")) {
             apartmentQ = "apartment is null";
@@ -143,7 +143,7 @@ public class DatabaseConnection {
         }
 
 
-        String condition = String.format("%s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ);
+        String condition = String.format("%s and %s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ, additionalInfo);
 
         return String.format("select %s from %s where %s", columnQ, databaseName, condition);
     }

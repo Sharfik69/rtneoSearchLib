@@ -16,7 +16,6 @@ public class newFileCreater {
     private XSSFSheet sheet;
     private int currentRow;
     private Finder finder;
-
     newFileCreater(Finder finder) {
         wb = new XSSFWorkbook();
         sheet = (XSSFSheet) wb.createSheet();
