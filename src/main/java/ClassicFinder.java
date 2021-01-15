@@ -1,14 +1,10 @@
+import com.google.gson.Gson;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClassicFinder extends Finder {
 
@@ -19,6 +15,8 @@ public class ClassicFinder extends Finder {
     private newFileCreater forFewRecords;
     private int[] status;
     private newFileCreater forAreaRecords;
+
+    private Set <String> dontUsed;
     /**
      * @param fileName       Имя файла в папке inputFiles
      * @param outputFileName С каким именем сохранить файл в папке outputFiles
@@ -32,7 +30,7 @@ public class ClassicFinder extends Finder {
      * @param createTable    Нужно ли создавать таблицу, работа с которой будет намного быстрее
      */
     ClassicFinder(String fileName, String outputFileName, int cadastrCol, int areaCol, int nameCol,
-                  boolean header, String databaseName, String login, String password, String addr, String port, boolean createTable) {
+                  boolean header, String databaseName, String login, String password, String addr, String port, boolean createTable) throws IOException {
         super(fileName, outputFileName, cadastrCol, areaCol, nameCol, header);
         this.databaseName = databaseName;
         this.login = login;
@@ -45,6 +43,23 @@ public class ClassicFinder extends Finder {
             boolean ans = this.connection.createSuperTable();
             System.out.println(ans ? "Супер таблица была создана" : "Таблица скорее всего уже существует");
         }
+
+        //вынужденная временная мера
+
+        InputStream is = new FileInputStream("src/inputFiles/removed.json");
+        BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+
+        String line = buf.readLine();
+        StringBuilder sb = new StringBuilder();
+        while(line != null){
+            sb.append(line).append("\n");
+            line = buf.readLine();
+        }
+
+        String fileAsString = sb.toString();
+        Map<String, String> map = new Gson().fromJson(fileAsString, Map.class);
+        this.dontUsed = map.keySet();
+
     }
 
     /**
@@ -108,6 +123,13 @@ public class ClassicFinder extends Finder {
             } else {
                 responses = connection.sendQuery(street, house, apartment, complementaryInfo);
             }
+            List <Map <String, String> > response2 = new ArrayList<>();
+            for (Map response : responses) {
+                if (!dontUsed.contains(response.get("cadastral_number"))) {
+                    response2.add(response);
+                }
+            }
+            responses = response2;
             if (responses.size() == 1) {
                 Map<String, String> responseMap = responses.get(0);
                 setCadastr(i, responseMap, sheet);

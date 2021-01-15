@@ -83,7 +83,7 @@ public class DatabaseConnection {
 
     public List<Map<String, String>> searchWithoutStreet(String street, String house, String apartment, String complementaryInfo) {
         String query = queryFormer(street, house, apartment, complementaryInfo);
-        query = query.replace(String.format("(street like '%s' or street like '%s|%%')", street, street), String.format("(street is null and address_notes like '%%%s%%')", capitalize(street)));
+        query = query.replace(String.format("(street like '%s' or street like '%s|%%' or street like '%s-Й' or street like '%s-Я')", street, street, street, street), String.format("(street is null and address_notes like '%%%s%%')", capitalize(street)));
         return queryHandler(query);
     }
 
