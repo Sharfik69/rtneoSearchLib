@@ -33,6 +33,9 @@ public class newFileCreater {
             } catch (NullPointerException e) {
                 continue;
             }
+            catch (IllegalStateException e) {
+                cell.setCellValue(rowInfo.getCell(col).getNumericCellValue());
+            }
         }
         for (Map<String, String> response : responses) {
             currentRow += 1;

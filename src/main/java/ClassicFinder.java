@@ -99,6 +99,7 @@ public class ClassicFinder extends Finder {
         for (int i = from; ; i++, rowSize++) {
             try {
                 ss = sheet.getRow(i).getCell(checker).getStringCellValue();
+                if (ss.equals("")) break;
             } catch (NullPointerException e) {
                 break;
             }
@@ -109,8 +110,9 @@ public class ClassicFinder extends Finder {
             String street = getXCell(i, streetCol, sheet).toUpperCase();
             String house = getXCell(i, houseCol, sheet);
             String apartment = getXCell(i, apartmentCol, sheet);
-            String complementaryInfo = getXCell(i, infoCol, sheet);
+            String complementaryInfo = "Краснокаменск";
 
+            //Проверка на то, что поле с кадастром пустое
             String cadastralCheck = getXCell(i, getCadastrCol(), sheet);
 
             if (!cadastralCheck.equals("")) {
