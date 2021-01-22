@@ -56,6 +56,9 @@ public class DatabaseConnection {
      */
     public List<Map<String, String>> sendQuery(String street, String house, String apartment, String complementaryInfo) {
 
+        street = street.replace("Ё", "Е");
+
+
         String queryF = queryFormer(street, house, apartment, complementaryInfo);
         List<Map<String, String>> q = queryHandler(queryF);
         if (q.size() == 0) {
@@ -72,6 +75,8 @@ public class DatabaseConnection {
      */
     public List<Map<String, String>> sendQuery(String street, String house, String complementaryInfo) {
 
+        street = street.replace("Ё", "Е");
+
         String queryF = queryFormer(street, house, "", complementaryInfo);
         List<Map<String, String>> q = queryHandler(queryF);
         if (q.size() == 0) {
@@ -82,6 +87,9 @@ public class DatabaseConnection {
     }
 
     public List<Map<String, String>> searchWithoutStreet(String street, String house, String apartment, String complementaryInfo) {
+
+        street = street.replace("Ё", "Е");
+
         String query = queryFormer(street, house, apartment, complementaryInfo);
         query = query.replace(String.format("(street like '%s' or street like '%s|%%' or street like '%s-Й' or street like '%s-Я')", street, street, street, street), String.format("(street is null and address_notes like '%%%s%%')", capitalize(street)));
         return queryHandler(query);
@@ -126,9 +134,9 @@ public class DatabaseConnection {
         //Обработка дома
         String[] literalResponseHouse = letterAndDigitInString(house);
         if (!literalResponseHouse[0].equals("")) {
-            houseQ = String.format("(house like '%s%s%%' or house like '%s_%s%%' or house like '%s%s%%' or house like '%s_%s%%')",
-                    literalResponseHouse[0], literalResponseHouse[1], literalResponseHouse[0], literalResponseHouse[1],
-                    literalResponseHouse[0], literalResponseHouse[1].toUpperCase(), literalResponseHouse[0], literalResponseHouse[1].toUpperCase());
+            houseQ = String.format("(house like '%s%s%%' or house like '%s%s%%')",
+                    literalResponseHouse[0], literalResponseHouse[1],
+                    literalResponseHouse[0], literalResponseHouse[1].toUpperCase());
         }
 
         //Обработка улицы
@@ -142,6 +150,7 @@ public class DatabaseConnection {
                     digitResponseStreet[1], digitResponseStreet[0]);
         }
 
+        streetQ = "(street is null)";
 
         String condition = String.format("%s and %s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ, additionalInfo);
 
@@ -178,6 +187,12 @@ public class DatabaseConnection {
     }
 
 
+    public List<Map<String, String>> chitaPoisk(String house, String apartment, String area) {
+        String query = "select cadastralal_number, ";
+        return Collections.EMPTY_LIST;
+    }
+
+
     /**
      * Метод который создает заджойненную таблицу, с которой удобнее всего работать
      *
@@ -198,6 +213,9 @@ public class DatabaseConnection {
         }
         return true;
     }
+
+
+
 
     private String capitalize(String val) {
         return val.substring(0,1).toUpperCase() + val.substring(1).toLowerCase();

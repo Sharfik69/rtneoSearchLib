@@ -8,14 +8,14 @@ import com.google.gson.Gson;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String fileName = "Усольский";
+        String fileName = "Краснокаменск";
         ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
                 fileName + " синхронизированные.xlsx",
-                14,
-                15,
-                16,
+                10,
+                12,
+                11,
                 false,
-                "reimport2",
+                "chita",
                 "cuba",
                 "cuba",
                 "localhost",
@@ -25,11 +25,11 @@ public class Main {
         long startTime = System.nanoTime();
 
         a.setSearchSettings(true,
-                4,
-                5,
-                7,
                 2,
-                10,
+                2,
+                4,
+                1,
+                7,
                 1);
         int[] test_ans = a.dummySearch();
 
