@@ -1,19 +1,14 @@
 import java.io.*;
-import java.util.HashMap;
-import java.nio.file.Files;
-import java.util.Map;
-import com.google.gson.Gson;
-//XSSF
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String fileName = "Усольский";
+        String fileName = "г Усолье-Сибирское";
         ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
                 fileName + " синхронизированные.xlsx",
-                14,
-                15,
-                16,
+                10,
+                11,
+                12,
                 false,
                 "reimport2",
                 "cuba",
@@ -25,12 +20,12 @@ public class Main {
         long startTime = System.nanoTime();
 
         a.setSearchSettings(true,
-                4,
                 5,
+                4,
+                100,
                 7,
-                2,
-                10,
-                1);
+                100,
+                0);
         int[] test_ans = a.dummySearch();
 
         long endTime = System.nanoTime();

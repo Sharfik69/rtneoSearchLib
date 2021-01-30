@@ -111,6 +111,12 @@ public class ClassicFinder extends Finder {
             String apartment = getXCell(i, apartmentCol, sheet);
             String complementaryInfo = getXCell(i, infoCol, sheet);
 
+            if (complementaryInfo.equals("")) {
+                complementaryInfo = getXCell(i, infoCol + 1, sheet);
+            }
+
+            house = house.replace("_", "");
+
             String cadastralCheck = getXCell(i, getCadastrCol(), sheet);
 
             if (!cadastralCheck.equals("")) {
@@ -207,6 +213,9 @@ public class ClassicFinder extends Finder {
             return sheet.getRow(row).getCell(col).getStringCellValue();
         } catch (NullPointerException e) {
             return "";
+        }
+        catch (IllegalStateException e) {
+            return String.valueOf(sheet.getRow(row).getCell(col).getRawValue());
         }
     }
 
