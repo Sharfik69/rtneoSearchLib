@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String fileName = "Усольский";
+        String fileName = "Усть-Удинский";
         ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
                 fileName + " синхронизированные.xlsx",
                 14,
@@ -29,7 +29,7 @@ public class Main {
                 5,
                 7,
                 2,
-                10,
+                13,
                 1);
         int[] test_ans = a.dummySearch();
 
@@ -38,5 +38,6 @@ public class Main {
         long duration = (endTime - startTime) / 1000000000;
         System.out.println("\n" + duration + " секунд");
         a.saveTable();
+        a.createCSV();
     }
 }

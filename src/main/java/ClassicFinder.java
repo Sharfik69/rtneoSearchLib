@@ -16,6 +16,8 @@ public class ClassicFinder extends Finder {
     private int[] status;
     private newFileCreater forAreaRecords;
 
+    private ArrayList <String> foundAddresses;
+
     private Set <String> dontUsed;
     /**
      * @param fileName       Имя файла в папке inputFiles
@@ -43,6 +45,8 @@ public class ClassicFinder extends Finder {
             boolean ans = this.connection.createSuperTable();
             System.out.println(ans ? "Супер таблица была создана" : "Таблица скорее всего уже существует");
         }
+
+        foundAddresses = new ArrayList<>();
 
         //вынужденная временная мера
 
@@ -200,6 +204,27 @@ public class ClassicFinder extends Finder {
         sheet.getRow(row).createCell(getCadastrCol(), CellType.STRING).setCellValue(responseMap.get("cadastral_number"));
         sheet.getRow(row).createCell(getAreaCol(), CellType.STRING).setCellValue(responseMap.get("area"));
         sheet.getRow(row).createCell(getNameCol(), CellType.STRING).setCellValue(responseMap.get("name"));
+
+        foundAddresses.add(responseMap.get("cadastral_number"));
+
+    }
+
+    public void createCSV() {
+        try (PrintWriter writer = new PrintWriter(new File("src/inputFiles/IPK.csv"))) {
+
+            StringBuilder sb = new StringBuilder();
+
+            for (String i : foundAddresses) {
+                sb.append(i).append("\n");
+            }
+
+            writer.write(sb.toString());
+
+            System.out.println("CSV создан");
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private String getXCell(int row, int col, XSSFSheet sheet) {
