@@ -182,7 +182,7 @@ public class ClassicFinder extends Finder {
                     ans[1],
                     ans[2],
                     i,
-                    ans[0] * 100 / i));
+                    ans[0] * 100 / (i + 1)));
         }
         forFewRecords.saveFile(getFileName() + " Несколько записей.xlsx");
         forAreaRecords.saveFile(getFileName() + " Несколько записей, но нашли верную по площади.xlsx");
