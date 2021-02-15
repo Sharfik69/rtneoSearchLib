@@ -121,6 +121,7 @@ public class ClassicFinder extends Finder {
                 continue;
             }
 
+
             List<Map<String, String>> responses;
             if (apartment.equals("-") || apartment.equals("")) {
                 responses = connection.sendQuery(street, house, complementaryInfo);
@@ -175,12 +176,13 @@ public class ClassicFinder extends Finder {
             } else {
                 ans[1]++;
             }
-            System.out.print(String.format("\r%d%% (g - %d, b - %d, f - %d) id - %d",
+            System.out.print(String.format("\r%d%% (g - %d, b - %d, f - %d) id - %d | Proc: %d%%",
                     cnt * 100 / rowSize,
                     ans[0],
                     ans[1],
                     ans[2],
-                    i));
+                    i,
+                    ans[0] * 100 / i));
         }
         forFewRecords.saveFile(getFileName() + " Несколько записей.xlsx");
         forAreaRecords.saveFile(getFileName() + " Несколько записей, но нашли верную по площади.xlsx");
@@ -210,7 +212,7 @@ public class ClassicFinder extends Finder {
     }
 
     public void createCSV() {
-        try (PrintWriter writer = new PrintWriter(new File("src/inputFiles/IPK.csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File("src/inputFiles/" + getFileName() + " IPK.csv"))) {
 
             StringBuilder sb = new StringBuilder();
 
