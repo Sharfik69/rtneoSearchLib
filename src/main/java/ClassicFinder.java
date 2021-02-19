@@ -232,7 +232,10 @@ public class ClassicFinder extends Finder {
     private String getXCell(int row, int col, XSSFSheet sheet) {
         try {
             return sheet.getRow(row).getCell(col).getStringCellValue();
-        } catch (NullPointerException e) {
+        } catch (IllegalStateException e) {
+            return String.valueOf(Integer.valueOf((int) sheet.getRow(row).getCell(col).getNumericCellValue()));
+        }
+        catch (NullPointerException e) {
             return "";
         }
     }
