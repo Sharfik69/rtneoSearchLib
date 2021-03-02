@@ -101,8 +101,12 @@ public class ClassicFinder extends Finder {
         int rowSize = 0;
         String ss;
         for (int i = from; ; i++, rowSize++) {
+
             try {
                 ss = sheet.getRow(i).getCell(checker).getStringCellValue();
+                if (ss.equals("")) {
+                    throw new NullPointerException();
+                }
             } catch (NullPointerException e) {
                 break;
             }
@@ -116,6 +120,10 @@ public class ClassicFinder extends Finder {
             String complementaryInfo = getXCell(i, infoCol, sheet);
 
             String cadastralCheck = getXCell(i, getCadastrCol(), sheet);
+
+            if (i == 23){
+                String sq = "Dimas ";
+            }
 
             if (!cadastralCheck.equals("")) {
                 continue;

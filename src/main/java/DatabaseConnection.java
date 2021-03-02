@@ -59,7 +59,7 @@ public class DatabaseConnection {
         String queryF = queryFormer(street, house, apartment, complementaryInfo);
         List<Map<String, String>> q = queryHandler(queryF);
         if (q.size() == 0) {
-            q = searchWithoutStreet(street, house, apartment, complementaryInfo);
+//            q = searchWithoutStreet(street, house, apartment, complementaryInfo);
         }
         return q;
     }
@@ -75,7 +75,7 @@ public class DatabaseConnection {
         String queryF = queryFormer(street, house, "", complementaryInfo);
         List<Map<String, String>> q = queryHandler(queryF);
         if (q.size() == 0) {
-            q = searchWithoutStreet(street, house, "", complementaryInfo);
+//            q = searchWithoutStreet(street, house, "", complementaryInfo);
         }
         return q;
 
@@ -83,7 +83,7 @@ public class DatabaseConnection {
 
     public List<Map<String, String>> searchWithoutStreet(String street, String house, String apartment, String complementaryInfo) {
         String query = queryFormer(street, house, apartment, complementaryInfo);
-        query = query.replace(String.format("(street like '%s' or street like '%s|%%' or street like '%s-Й%%' or street like '%s-Я')", street, street, street, street), "(street is null)");
+        query = query.replace(String.format("(street like '%s' or street like '%s|%%' or street like '%s-Й%%' or street like '%s-Я')", street, street, street, street), String.format("(address_notes like '%%%%s%%')", street));
         return queryHandler(query);
     }
 

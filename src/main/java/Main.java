@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String fileName = "Иркутск3";
+        String fileName = "Эхирит-Булагатский";
         ClassicFinder a = new ClassicFinder(fileName + ".xlsx",
                 fileName + " синхронизированные.xlsx",
                 14,
