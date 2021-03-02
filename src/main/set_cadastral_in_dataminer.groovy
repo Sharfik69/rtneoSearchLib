@@ -54,11 +54,16 @@ data = reader.readAll();
 
 cadastral_list = []
 def sze = data.size
-sze = 10
+sze = 100
 for (def i = 0; i < sze; i++) {
-    cadastral_list.add(data[i][0])
+    cadastral_list.add([data[i][0], data[i][1]])
 }
 
 SyncAccountIPK a = new SyncAccountIPK()
-a.setCadastralNumber(cadastral_list[0])
-dataManager.commit(a)
+
+for (def i = 0; i < cadastral_list.size(); i++) {
+    a.setCadastralNumber(cadastral_list[i][0])
+    BigDecimal x = new BigDecimal(cadastral_list[i][1])
+    a.setArea(x)
+    dataManager.commit(a)
+}
