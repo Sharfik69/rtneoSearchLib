@@ -2,6 +2,8 @@
 *.txt
 *.xlsx#
 
+/src/inputFiles
+
 /src/inputFiles/super_compl_info
 
 out/
