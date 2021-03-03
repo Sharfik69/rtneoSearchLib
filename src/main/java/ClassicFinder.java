@@ -15,7 +15,7 @@ public class ClassicFinder extends Finder {
     private newFileCreater forFewRecords;
     private int[] status;
     private newFileCreater forAreaRecords;
-
+    private final int lineSize = 20;
     private ArrayList <String> foundAddresses;
 
     private Set <String> dontUsed;
@@ -91,7 +91,6 @@ public class ClassicFinder extends Finder {
      * @return возвращает массив, 0 элемент количество найденных, 1 элемент количество не найденных, 2 элемент количество нескольких найденных записей
      */
     public int[] dummySearch() throws IOException {
-        System.out.println("Run");
         int[] ans = new int[3];
         if (!settingsWasEdited) {
             return new int[]{-1, -1, -1};
@@ -120,10 +119,6 @@ public class ClassicFinder extends Finder {
             String complementaryInfo = getXCell(i, infoCol, sheet);
 
             String cadastralCheck = getXCell(i, getCadastrCol(), sheet);
-
-            if (i == 23){
-                String sq = "Dimas ";
-            }
 
             if (!cadastralCheck.equals("")) {
                 continue;
@@ -184,8 +179,22 @@ public class ClassicFinder extends Finder {
             } else {
                 ans[1]++;
             }
-            System.out.print(String.format("\r%d%% (g - %d, b - %d, f - %d) id - %d | Proc: %d%%",
+
+            StringBuilder line = new StringBuilder("[");
+
+            int proc = cnt * 100 / rowSize;
+            int g = proc * lineSize / 100;
+            int b = lineSize - g;
+
+            for (int xx = 0; xx < g; xx++) line.append("|");
+            for (int xx = 0; xx < b; xx++) line.append("-");
+
+            line.append("]");
+
+
+            System.out.print(String.format("\r%d%% %s (g - %d, b - %d, f - %d) id - %d | Sync: %d%%",
                     cnt * 100 / rowSize,
+                    line.toString(),
                     ans[0],
                     ans[1],
                     ans[2],

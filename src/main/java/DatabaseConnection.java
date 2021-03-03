@@ -9,7 +9,7 @@ public class DatabaseConnection {
     static String PASS = "password";
     private Connection connection;
     private Statement stmt;
-    private String databaseName = "reimport_rtneo_refactor";
+    private String databaseName = "reimport_rtneo_irkutsk";
 
     /**
      * @param name     название базы
