@@ -9,7 +9,7 @@ public class DatabaseConnection {
     static String PASS = "password";
     private Connection connection;
     private Statement stmt;
-    private String databaseName = "reimport_rtneo_irkutsk";
+    private String useTableName = "rtneo_SAYANSK";
 
     /**
      * @param name     название базы
@@ -50,6 +50,33 @@ public class DatabaseConnection {
     }
 
     /**
+     * @param tableName  таблицу с каким названием создать
+     * @param regionName название региона
+     * @return true - если таблица была создана и теперь использоваться будет она;  false - если все помойно и ниче не сделалось
+     * @throws SQLException
+     */
+    public boolean createTableByRegion(String tableName, String regionName) throws SQLException {
+        String query = String.format("create table %s as select * from reimport_rtneo_refactor where address_notes like '%%%s%%'", tableName, regionName);
+        boolean rs = stmt.execute(query);
+        if (rs) {
+            useTableName = tableName;
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public void deleteTable(String tableName) throws SQLException {
+        stmt.execute(String.format("drop table if exist %s", tableName));
+        useTableName = "reimport_rtneo_refactor";
+    }
+
+    public void setTableName(String tableName) {
+        useTableName = tableName;
+    }
+
+    /**
      * Обычный метод поиска для квартир, используем пока для разработки
      *
      * @param complementaryInfo информация, лучше всего сюда передавать регион
@@ -83,7 +110,7 @@ public class DatabaseConnection {
 
     public List<Map<String, String>> searchWithoutStreet(String street, String house, String apartment, String complementaryInfo) {
         String query = queryFormer(street, house, apartment, complementaryInfo);
-        query = query.replace(String.format("(street like '%s' or street like '%s|%%' or street like '%s-Й%%' or street like '%s-Я')", street, street, street, street), String.format("(address_notes like '%%%%s%%')", street));
+        query = query.replace(String.format("(street like '%s %%' or street like '%s' or street like '%s|%%' or street like '%s-Й%%' or street like '%s-Я')", street, street, street, street, street), String.format("(address_notes like '%%%%s%%')", street));
         return queryHandler(query);
     }
 
@@ -145,7 +172,7 @@ public class DatabaseConnection {
 
         String condition = String.format("%s and %s and %s and %s and %s", streetQ, houseQ, apartmentQ, addressNotesQ, additionalInfo);
 
-        return String.format("select %s from %s where %s", columnQ, databaseName, condition);
+        return String.format("select %s from %s where %s", columnQ, useTableName, condition);
     }
 
     /**

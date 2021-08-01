@@ -30,6 +30,8 @@ public class newFileCreater {
             XSSFCell cell = currentNewRow.createCell(col);
             try {
                 cell.setCellValue(rowInfo.getCell(col).getStringCellValue());
+            } catch (IllegalStateException e) {
+                cell.setCellValue(String.valueOf((int) rowInfo.getCell(col).getNumericCellValue()));
             } catch (NullPointerException e) {
                 continue;
             }
