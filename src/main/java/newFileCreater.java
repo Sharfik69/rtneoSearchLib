@@ -45,7 +45,7 @@ public class newFileCreater {
     }
 
     public void saveFile(String finalFileName) throws IOException {
-        File file = new File("src/inputFiles/" + finalFileName);
+        File file = new File("src/inputFiles/response/" + finder.getFileName() + "/" + finalFileName);
 
         FileOutputStream outFile = new FileOutputStream(file);
         wb.write(outFile);

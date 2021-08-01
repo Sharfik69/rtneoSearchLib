@@ -21,7 +21,6 @@ public class DatabaseConnection {
     DatabaseConnection(String name, String login, String password, String addr, String port) {
         USER = login;
         PASS = password;
-        DB_URL = DB_URL + addr + ":" + port + "/" + name;
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -34,7 +33,7 @@ public class DatabaseConnection {
         connection = null;
 
         try {
-            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            connection = DriverManager.getConnection(DB_URL + addr + ":" + port + "/" + name, USER, PASS);
             stmt = connection.createStatement();
         } catch (SQLException e) {
             System.out.println("Произошла ошибка");
@@ -57,6 +56,7 @@ public class DatabaseConnection {
      */
     public boolean createTableByRegion(String tableName, String regionName) throws SQLException {
         String query = String.format("create table %s as select * from reimport_rtneo_refactor where address_notes like '%%%s%%'", tableName, regionName);
+        deleteTable("RTNEO_SUPER_LOCAL");
         boolean rs = stmt.execute(query);
         if (rs) {
             useTableName = tableName;
@@ -68,7 +68,7 @@ public class DatabaseConnection {
     }
 
     public void deleteTable(String tableName) throws SQLException {
-        stmt.execute(String.format("drop table if exist %s", tableName));
+        stmt.execute(String.format("drop table if exists %s", tableName));
         useTableName = "reimport_rtneo_refactor";
     }
 
@@ -226,8 +226,12 @@ public class DatabaseConnection {
         return true;
     }
 
+    public void closeConnection() throws SQLException {
+        connection.close();
+    }
+
     private String capitalize(String val) {
-        return val.substring(0,1).toUpperCase() + val.substring(1).toLowerCase();
+        return val.substring(0, 1).toUpperCase() + val.substring(1).toLowerCase();
 
     }
 

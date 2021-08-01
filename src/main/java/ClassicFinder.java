@@ -4,6 +4,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.*;
 
 public class ClassicFinder extends Finder {
@@ -83,6 +84,14 @@ public class ClassicFinder extends Finder {
         this.infoAreaCol = infoAreaCol;
         this.checker = checker;
         this.settingsWasEdited = true;
+    }
+
+    public void createTableForFast() throws SQLException {
+        connection.createTableByRegion("RTNEO_SUPER_LOCAL", getFileName());
+    }
+
+    public void deleteTableForFast() throws SQLException {
+        connection.deleteTable("RTNEO_SUPER_LOCAL");
     }
 
     /**
@@ -204,7 +213,7 @@ public class ClassicFinder extends Finder {
         forFewRecords.saveFile(getFileName() + " Несколько записей.xlsx");
         forAreaRecords.saveFile(getFileName() + " Несколько записей, но нашли верную по площади.xlsx");
         status = ans;
-        FileWriter writer = new FileWriter("src/inputFiles/" + getFileName() + ".txt", true);
+        FileWriter writer = new FileWriter("src/inputFiles/response/" + getFileName() + "/" + getFileName() + ".txt", true);
         BufferedWriter bufferWriter = new BufferedWriter(writer);
         bufferWriter.write(Arrays.toString(ans) + " " + getFileName());
         bufferWriter.close();
@@ -229,7 +238,7 @@ public class ClassicFinder extends Finder {
     }
 
     public void createCSV() {
-        try (PrintWriter writer = new PrintWriter(new File("src/inputFiles/" + getFileName() + " IPK.csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File("src/inputFiles/response/" + getFileName() + "/" + getFileName() + " IPK.csv"))) {
 
             StringBuilder sb = new StringBuilder();
 
@@ -244,6 +253,10 @@ public class ClassicFinder extends Finder {
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void closeConnection() throws SQLException {
+        connection.closeConnection();
     }
 
     private String getXCell(int row, int col, XSSFSheet sheet) {

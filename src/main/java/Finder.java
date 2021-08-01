@@ -32,7 +32,13 @@ abstract class Finder {
     Finder(String fileName, String outputFileName, int cadastrCol, int areaCol, int nameCol, boolean header) {
         try {
             this.fileName = fileName;
-            inputStream = new FileInputStream(new File("src/inputFiles/" + fileName));
+
+            File theDir = new File(String.format("src/inputFiles/response/%s", fileName.replace(".xlsx", "")));
+            if (!theDir.exists()) {
+                theDir.mkdirs();
+            }
+
+            inputStream = new FileInputStream(new File("src/inputFiles/from/" + fileName));
             workbook = new XSSFWorkbook(inputStream);
             sheet = workbook.getSheetAt(0);
             finalFileName = outputFileName;
@@ -47,7 +53,7 @@ abstract class Finder {
     }
 
     public void saveTable() throws IOException {
-        File file = new File("src/inputFiles/" + finalFileName);
+        File file = new File("src/inputFiles/response/" + fileName.replace(".xlsx", "") + "/" + finalFileName);
 
         FileOutputStream outFile = new FileOutputStream(file);
         workbook.write(outFile);
