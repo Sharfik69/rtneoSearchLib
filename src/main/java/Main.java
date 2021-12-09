@@ -30,7 +30,6 @@ public class Main {
                 for (int ii = 0; ii < 20; ii++) System.out.print("-");
                 System.out.println();
             } catch (IOException | SQLException e) {
-                System.out.println("opa gavno");
                 e.printStackTrace();
             }
         }
